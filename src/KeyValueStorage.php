@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Devorto\KeyValueStorage;
 
 use InvalidArgumentException;
@@ -15,7 +17,7 @@ class KeyValueStorage implements Iterator
     /**
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * @param string $key
@@ -23,10 +25,10 @@ class KeyValueStorage implements Iterator
      *
      * @return KeyValueStorage
      */
-    public function add(string $key, $value): KeyValueStorage
+    public function add(string $key, mixed $value): KeyValueStorage
     {
-        if (empty($key)) {
-            throw new InvalidArgumentException('Key cannot be empty.');
+        if (empty(trim($key))) {
+            throw new InvalidArgumentException('Key cannot be an empty string.');
         }
 
         $this->data[$key] = $value;
@@ -39,8 +41,12 @@ class KeyValueStorage implements Iterator
      *
      * @return mixed
      */
-    public function get(string $key)
+    public function get(string $key): mixed
     {
+        if (empty(trim($key))) {
+            throw new InvalidArgumentException('Key cannot be an empty string.');
+        }
+
         return $this->data[$key];
     }
 
@@ -51,6 +57,10 @@ class KeyValueStorage implements Iterator
      */
     public function has(string $key): bool
     {
+        if (empty(trim($key))) {
+            throw new InvalidArgumentException('Key cannot be an empty string.');
+        }
+
         return array_key_exists($key, $this->data);
     }
 
@@ -61,6 +71,10 @@ class KeyValueStorage implements Iterator
      */
     public function delete(string $key): KeyValueStorage
     {
+        if (empty(trim($key))) {
+            throw new InvalidArgumentException('Key cannot be an empty string.');
+        }
+
         unset($this->data[$key]);
 
         return $this;
@@ -71,9 +85,8 @@ class KeyValueStorage implements Iterator
      *
      * @link https://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
-     * @since 5.0.0
      */
-    public function current()
+    public function current(): mixed
     {
         return current($this->data);
     }
@@ -83,9 +96,8 @@ class KeyValueStorage implements Iterator
      *
      * @link https://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
-     * @since 5.0.0
      */
-    public function next()
+    public function next(): void
     {
         next($this->data);
     }
@@ -95,9 +107,8 @@ class KeyValueStorage implements Iterator
      *
      * @link https://php.net/manual/en/iterator.key.php
      * @return mixed scalar on success, or null on failure.
-     * @since 5.0.0
      */
-    public function key()
+    public function key(): mixed
     {
         return key($this->data);
     }
@@ -106,11 +117,10 @@ class KeyValueStorage implements Iterator
      * Checks if current position is valid
      *
      * @link https://php.net/manual/en/iterator.valid.php
-     * @return boolean The return value will be casted to boolean and then evaluated.
+     * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
-     * @since 5.0.0
      */
-    public function valid()
+    public function valid(): bool
     {
         return key($this->data) !== null;
     }
@@ -120,9 +130,8 @@ class KeyValueStorage implements Iterator
      *
      * @link https://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
-     * @since 5.0.0
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->data);
     }
